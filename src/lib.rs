@@ -135,7 +135,7 @@ const NUM_RAND_CHARS: usize = 6;
 
 use std::ffi::OsStr;
 use std::fs::OpenOptions;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::{env, io};
 
 mod dir;
@@ -497,5 +497,15 @@ impl<'a, 'b> Builder<'a, 'b> {
         }
 
         util::create_helper(dir, self.prefix, self.suffix, self.random_len, dir::create)
+    }
+
+    pub fn filename<P: AsRef<Path>>(&self, dir: P) -> io::Result<PathBuf> {
+        util::create_helper(
+            dir.as_ref(),
+            self.prefix,
+            self.suffix,
+            self.random_len,
+            |path| Ok(path),
+        )
     }
 }
