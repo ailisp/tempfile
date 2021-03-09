@@ -9,6 +9,7 @@ use std::ops::Deref;
 use std::path::{Path, PathBuf};
 
 use crate::error::IoResultExt;
+use crate::util;
 use crate::Builder;
 
 mod imp;
@@ -53,6 +54,21 @@ mod imp;
 /// [`std::env::temp_dir()`]: https://doc.rust-lang.org/std/env/fn.temp_dir.html
 pub fn tempfile() -> io::Result<File> {
     tempfile_in(&env::temp_dir())
+}
+
+#[allow(unused)]
+pub fn tempname() -> io::Result<PathBuf> {
+    tempname_in(&env::temp_dir())
+}
+
+pub fn tempname_in<P: AsRef<Path>>(dir: P) -> io::Result<PathBuf> {
+    util::create_helper(
+        dir.as_ref(),
+        OsStr::new(".tmp"),
+        OsStr::new(""),
+        crate::NUM_RAND_CHARS,
+        |path| Ok(path),
+    )
 }
 
 /// Create a new temporary file in the specified directory.
